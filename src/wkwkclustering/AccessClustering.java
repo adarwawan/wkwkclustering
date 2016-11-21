@@ -5,6 +5,7 @@
  */
 package wkwkclustering;
 
+import Clustering.MyKMeans;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,6 +13,7 @@ import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.DensityBasedClusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
 
 /**
  *
@@ -25,22 +27,20 @@ public class AccessClustering {
     public DensityBasedClusterer cl;
     
     public AccessClustering(String filename, int cluster_algo) throws Exception {
-        BufferedReader datafile = readDataFile(filename); 
         System.out.println("Ler "+filename);
-        data = new Instances(datafile);
-        
-        SimpleKMeans kmeans = new SimpleKMeans();
+        DataSource source = new DataSource(filename);
+        data = source.getDataSet();
+        MyKMeans kmeans = new MyKMeans();
  
         kmeans.setSeed(10);
 
         //important parameter to set: preserver order, number of cluster.
-        kmeans.setPreserveInstancesOrder(true);
-        kmeans.setNumClusters(3);
         kmeans.buildClusterer(data);
-
+        System.out.println(kmeans.toString());
+        
         eval = new ClusterEvaluation();
         eval.setClusterer(kmeans);
-        eval.evaluateClusterer(data);
+        eval.evaluateClusterer(new Instances(data));
 
         System.out.println("Cluster Evaluation: "+eval.clusterResultsToString()); 
     }
