@@ -30,12 +30,42 @@ public class AccessClustering {
         System.out.println("Ler "+filename);
         DataSource source = new DataSource(filename);
         data = source.getDataSet();
-        MyKMeans kmeans = new MyKMeans();
+        
+        switch (cluster_algo) {
+            case 1: // weka KMeans
+                {
+                    SimpleKMeans kmeans = new SimpleKMeans();
+                    kmeans.setSeed(10);
+                    kmeans.setPreserveInstancesOrder(true);
+                    kmeans.setNumClusters(5);
+                    kmeans.buildClusterer(data);
+                    System.out.println(kmeans.toString());
+                    
+                    int[] assignments = kmeans.getAssignments();
  
-        kmeans.setSeed(10);
-
-        //important parameter to set: preserver order, number of cluster.
-        kmeans.buildClusterer(data);
-        System.out.println(kmeans.toString(data));
+                    int i=0;
+                    for(int clusterNum : assignments) {
+                        System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
+                        i++;
+                    }
+                    break;
+                }
+            case 2: // weka Hierarchical
+                break;
+            case 3: // myAgnes
+                break;
+            case 4: // myKMeans
+                {
+                    MyKMeans kmeans = new MyKMeans();
+                    kmeans.setSeed(10);
+                    //important parameter to set: preserver order, number of cluster.
+                    kmeans.buildClusterer(data);
+                    System.out.println(kmeans.toString(data));
+                    break;
+                }
+            default:
+                break;
+        }
+        
     }
 }

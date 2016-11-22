@@ -41,7 +41,9 @@ public class Wkwkclustering {
             String s = reader.next();
             choose = Integer.parseInt(s);
 //            System.out.println(s);
-            AccessClustering accessClustering = new AccessClustering(filename, choose);
+            if (choose < 5){
+                AccessClustering accessClustering = new AccessClustering(filename, choose);
+            }
         }
     }
 }
