@@ -78,12 +78,10 @@ public class MyKMeans extends RandomizableClusterer{
         Instances[] tempI = new Instances[numCluster];
         
         iterations = 0;
-        System.out.println("WAKWAW");
         while (!converged) {
             iterations++;
             converged = true;
             for (int i = 0; i < instanceSize; i++) {
-                System.out.println("FANDA");
                 Instance toCluster = instances.instance(i);
                 int newC = clusterProcessedInstance(toCluster, true);
                 if (newC != clusterAssignments[i]) {
@@ -146,7 +144,6 @@ public class MyKMeans extends RandomizableClusterer{
     }
 
     private double[] moveCentroid(int centroidIdx, Instances members, boolean updateClusterInfo) {
-        System.out.println("YOOOOOOOO");
         double[] vals = new double[members.numAttributes()];
         
         for (int i = 0; i < members.numAttributes(); i++) {
