@@ -18,12 +18,30 @@ public class Wkwkclustering {
      * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
-        Scanner reader = new Scanner(System.in);  // Reading from System.in
-        System.out.println("Enter filename: ");
-        String s = reader.next();
-        System.out.println(s);
-        AccessClustering accessClustering = new AccessClustering(s, 1);
-        // 1. kMeans 2. HierarCLus 3. myKMeans 4. MyAgnes
+        int choose = 5; 
+        String filename = "";
+        
+        while (choose != 6) {
+            if (choose == 5) {
+                //input filename
+                Scanner reader = new Scanner(System.in);  // Reading from System.in
+                System.out.println("Enter filename: ");
+                filename = reader.next();
+            }
+            //Menu
+            System.out.println("------- Menu ------");
+            System.out.println("1. Weka KMeans Clustering");
+            System.out.println("2. Weka Hierarchical Clustering");
+            System.out.println("3. myAgnes");
+            System.out.println("4. myKMeans");
+            System.out.println("5. Change File");
+            System.out.println("6. Exit");
+
+            Scanner reader = new Scanner(System.in);
+            String s = reader.next();
+            choose = Integer.parseInt(s);
+//            System.out.println(s);
+            AccessClustering accessClustering = new AccessClustering(filename, choose);
+        }
     }
-    
 }
