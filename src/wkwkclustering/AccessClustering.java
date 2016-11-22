@@ -36,24 +36,6 @@ public class AccessClustering {
 
         //important parameter to set: preserver order, number of cluster.
         kmeans.buildClusterer(data);
-        System.out.println(kmeans.toString());
-        
-        eval = new ClusterEvaluation();
-        eval.setClusterer(kmeans);
-        eval.evaluateClusterer(new Instances(data));
-
-        System.out.println("Cluster Evaluation: "+eval.clusterResultsToString()); 
+        System.out.println(kmeans.toString(data));
     }
-    
-    private BufferedReader readDataFile (String filename) {
-        BufferedReader inputReader = null;
-        try {
-            inputReader = new BufferedReader(new FileReader(filename));
-        } catch (FileNotFoundException ex) {
-            System.err.println("File not found: " + filename);
-        }
-
-        return inputReader;
-    }
-    
 }

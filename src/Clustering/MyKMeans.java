@@ -41,6 +41,10 @@ public class MyKMeans extends RandomizableClusterer{
         setSeed(10);
     }
     
+    public int[] getAssignments() {
+        return clusterAssignments;
+    }
+    
     @Override
     public void buildClusterer(Instances data) throws Exception {
         Instances instances = new Instances(data);
@@ -154,7 +158,7 @@ public class MyKMeans extends RandomizableClusterer{
         return vals;
     }
     
-    public String toString() {
+    public String toString(Instances data) {
         if (clusterCentroids == null) {
             return "No clusterer built yet!";
         }
@@ -200,110 +204,121 @@ public class MyKMeans extends RandomizableClusterer{
             }
         }
 
-    // check for size of cluster sizes
-    for (double m_ClusterSize : clusterSizes) {
-        String size = "(" + m_ClusterSize + ")";
-        if (size.length() > maxWidth) {
-            maxWidth = size.length();
+        // check for size of cluster sizes
+        for (double m_ClusterSize : clusterSizes) {
+            String size = "(" + m_ClusterSize + ")";
+            if (size.length() > maxWidth) {
+                maxWidth = size.length();
+            }
         }
-    }
 
-    String plusMinus = "+/-";
-    maxAttWidth += 2;
-    if (maxAttWidth < "Attribute".length() + 2) {
-      maxAttWidth = "Attribute".length() + 2;
-    }
-
-    if (maxWidth < "Full Data".length()) {
-      maxWidth = "Full Data".length() + 1;
-    }
-
-    if (maxWidth < "missing".length()) {
-      maxWidth = "missing".length() + 1;
-    }
-
-    StringBuffer temp = new StringBuffer();
-    temp.append("\nkMeans\n======\n");
-    temp.append("\nNumber of iterations: " + iterations);
-
-
-    temp.append("\n\nFinal cluster centroids:\n");
-    temp.append(pad("Cluster#", " ", (maxAttWidth + (maxWidth * 2 + 2))
-      - "Cluster#".length(), true));
-
-    temp.append("\n");
-    temp
-      .append(pad("Attribute", " ", maxAttWidth - "Attribute".length(), false));
-
-    temp
-      .append(pad("Full Data", " ", maxWidth + 1 - "Full Data".length(), true));
-
-    // cluster numbers
-    for (int i = 0; i < numCluster; i++) {
-      String clustNum = "" + i;
-      temp.append(pad(clustNum, " ", maxWidth + 1 - clustNum.length(), true));
-    }
-    temp.append("\n");
-
-    // cluster sizes
-    String cSize = "(" + Utils.sum(clusterSizes) + ")";
-    temp.append(pad(cSize, " ", maxAttWidth + maxWidth + 1 - cSize.length(),
-      true));
-    for (int i = 0; i < numCluster; i++) {
-      cSize = "(" + clusterSizes[i] + ")";
-      temp.append(pad(cSize, " ", maxWidth + 1 - cSize.length(), true));
-    }
-    temp.append("\n");
-
-    temp.append(pad("", "=",
-      maxAttWidth
-        + (maxWidth * (clusterCentroids.numInstances() + 1)
-          + clusterCentroids.numInstances() + 1), true));
-    temp.append("\n");
-
-    for (int i = 0; i < clusterCentroids.numAttributes(); i++) {
-      String attName = clusterCentroids.attribute(i).name();
-      temp.append(attName);
-      for (int j = 0; j < maxAttWidth - attName.length(); j++) {
-        temp.append(" ");
-      }
-
-      String strVal;
-      String valMeanMode;
-      // full data
-      
-      for (int j = 0; j < numCluster; j++) {
-        if (clusterCentroids.attribute(i).isNominal()) {
-          if (clusterCentroids.instance(j).isMissing(i)) {
-            valMeanMode =
-              pad("missing", " ", maxWidth + 1 - "missing".length(), true);
-          } else {
-            valMeanMode =
-              pad(
-                (strVal =
-                  clusterCentroids.attribute(i).value(
-                    (int) clusterCentroids.instance(j).value(i))), " ",
-                maxWidth + 1 - strVal.length(), true);
-          }
-        } else {
-          if (clusterCentroids.instance(j).isMissing(i)) {
-            valMeanMode =
-              pad("missing", " ", maxWidth + 1 - "missing".length(), true);
-          } else {
-            valMeanMode =
-              pad(
-                (strVal =
-                  Utils.doubleToString(clusterCentroids.instance(j).value(i),
-                    maxWidth, 4).trim()), " ", maxWidth + 1 - strVal.length(),
-                true);
-          }
+        String plusMinus = "+/-";
+        maxAttWidth += 2;
+        if (maxAttWidth < "Attribute".length() + 2) {
+          maxAttWidth = "Attribute".length() + 2;
         }
-        temp.append(valMeanMode);
-      }
-      temp.append("\n");
-    }
 
-    temp.append("\n\n");
-    return temp.toString();
-  }
+        if (maxWidth < "Full Data".length()) {
+          maxWidth = "Full Data".length() + 1;
+        }
+
+        if (maxWidth < "missing".length()) {
+          maxWidth = "missing".length() + 1;
+        }
+
+        StringBuffer temp = new StringBuffer();
+        temp.append("\nkMeans\n======\n");
+        temp.append("\nNumber of iterations: " + iterations);
+
+
+        temp.append("\n\nFinal cluster centroids:\n");
+        temp.append(pad("Cluster#", " ", (maxAttWidth + (maxWidth * 2 + 2))
+          - "Cluster#".length(), true));
+
+        temp.append("\n");
+        temp
+          .append(pad("Attribute", " ", maxAttWidth - "Attribute".length(), false));
+
+        temp
+          .append(pad("Full Data", " ", maxWidth + 1 - "Full Data".length(), true));
+
+        // cluster numbers
+        for (int i = 0; i < numCluster; i++) {
+          String clustNum = "" + i;
+          temp.append(pad(clustNum, " ", maxWidth + 1 - clustNum.length(), true));
+        }
+        temp.append("\n");
+
+        // cluster sizes
+        String cSize = "(" + Utils.sum(clusterSizes) + ")";
+        temp.append(pad(cSize, " ", maxAttWidth + maxWidth + 1 - cSize.length(),
+          true));
+        for (int i = 0; i < numCluster; i++) {
+          cSize = "(" + clusterSizes[i] + ")";
+          temp.append(pad(cSize, " ", maxWidth + 1 - cSize.length(), true));
+        }
+        temp.append("\n");
+
+        temp.append(pad("", "=",
+          maxAttWidth
+            + (maxWidth * (clusterCentroids.numInstances() + 1)
+              + clusterCentroids.numInstances() + 1), true));
+        temp.append("\n");
+
+        for (int i = 0; i < clusterCentroids.numAttributes(); i++) {
+          String attName = clusterCentroids.attribute(i).name();
+          temp.append(attName);
+          for (int j = 0; j < maxAttWidth - attName.length(); j++) {
+            temp.append(" ");
+          }
+
+          String strVal;
+          String valMeanMode;
+          // full data
+
+          for (int j = 0; j < numCluster; j++) {
+            if (clusterCentroids.attribute(i).isNominal()) {
+              if (clusterCentroids.instance(j).isMissing(i)) {
+                valMeanMode =
+                  pad("missing", " ", maxWidth + 1 - "missing".length(), true);
+              } else {
+                valMeanMode =
+                  pad(
+                    (strVal =
+                      clusterCentroids.attribute(i).value(
+                        (int) clusterCentroids.instance(j).value(i))), " ",
+                    maxWidth + 1 - strVal.length(), true);
+              }
+            } else {
+              if (clusterCentroids.instance(j).isMissing(i)) {
+                valMeanMode =
+                  pad("missing", " ", maxWidth + 1 - "missing".length(), true);
+              } else {
+                valMeanMode =
+                  pad(
+                    (strVal =
+                      Utils.doubleToString(clusterCentroids.instance(j).value(i),
+                        maxWidth, 4).trim()), " ", maxWidth + 1 - strVal.length(),
+                    true);
+              }
+            }
+            temp.append(valMeanMode);
+          }
+          temp.append("\n");
+        }
+
+        temp.append("\n\n");
+        
+        int[] assignments = clusterAssignments;
+        for (int i = 0; i < data.numInstances(); i++) {
+            int id = (int) data.instance(i).value(0); // cast from double
+            String s = data.instance(i).toString();
+            temp.append("ID "+id+": "+s+" -> Cluster "+assignments[i]+" \n");
+        }
+        return temp.toString();
+    }
+    
+    public static void main(String[] args) {
+        
+    }
 }
