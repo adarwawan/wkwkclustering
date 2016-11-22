@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.DensityBasedClusterer;
+import weka.clusterers.HierarchicalClusterer;
 import weka.clusterers.SimpleKMeans;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
@@ -37,7 +38,7 @@ public class AccessClustering {
                     SimpleKMeans kmeans = new SimpleKMeans();
                     kmeans.setSeed(10);
                     kmeans.setPreserveInstancesOrder(true);
-                    kmeans.setNumClusters(5);
+                    kmeans.setNumClusters(3);
                     kmeans.buildClusterer(data);
                     System.out.println(kmeans.toString());
                     
@@ -51,7 +52,21 @@ public class AccessClustering {
                     break;
                 }
             case 2: // weka Hierarchical
-                break;
+                {
+                    HierarchicalClusterer clusterer = new HierarchicalClusterer();
+                    clusterer.setPrintNewick(true);
+                    clusterer.buildClusterer(data);
+                    System.out.println(clusterer.toString());
+                    
+//                    int[] assignments = hierarchical.getAssignments();
+// 
+//                    int i=0;
+//                    for(int clusterNum : assignments) {
+//                        System.out.printf("Instance %d -> Cluster %d \n", i, clusterNum);
+//                        i++;
+//                    }
+                    break;
+                }
             case 3: // myAgnes
                 break;
             case 4: // myKMeans
