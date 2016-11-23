@@ -98,11 +98,6 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
             clusters.remove(min);
             clusters.remove(max - 1);
         }
-        
-        
-        for (ClusterNode c : clusters) {
-            System.out.println(c.getItems());
-        }
     }
     
     public Double calculateSingleDistance(ClusterNode first, ClusterNode second) {
@@ -181,5 +176,16 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
                 distances[j][i] = distances[i][j];
             }
         }
+    }
+    
+    public String toString() {
+        String result = "";
+        for (int i = 0; i < clusters.size(); i++) {
+            result += "Cluster " + i;
+            result += clusters.get(i).getItems().toString();
+            result += "\n";
+        }
+        
+        return result;
     }
 }

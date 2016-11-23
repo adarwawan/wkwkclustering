@@ -5,6 +5,7 @@
  */
 package wkwkclustering;
 
+import Clustering.MyAgnes;
 import Clustering.MyKMeans;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -68,6 +69,10 @@ public class AccessClustering {
                     break;
                 }
             case 3: // myAgnes
+                MyAgnes myAgnes = new MyAgnes();
+                myAgnes.setNumClusters(3);
+                myAgnes.buildClusterer(data);
+                System.out.println(myAgnes.toString());
                 break;
             case 4: // myKMeans
                 {
