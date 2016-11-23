@@ -4,17 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 import weka.clusterers.AbstractClusterer;
 import weka.core.DistanceFunction;
+import weka.core.Drawable;
 import weka.core.EuclideanDistance;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.OptionHandler;
 
 /**
  *
  * @author Husni Munaya
  */
-public class MyAgnes extends AbstractClusterer  {
+public class MyAgnes extends AbstractClusterer implements OptionHandler  {
+    public final static int SINGLE = 0;
+    public final static int COMPLETE = 1;
+    
     // Default cluster number
     private int numClusters = 2;
+    
+    // Default link type
+    private int linkType = SINGLE;
     
     // Default distance function
     private DistanceFunction distanceFunction = new EuclideanDistance();
@@ -32,6 +40,10 @@ public class MyAgnes extends AbstractClusterer  {
     
     public void setDistanceFunction(DistanceFunction distanceFunction) {
         this.distanceFunction = distanceFunction;
+    }
+    
+    public void setLinkType(int linkType) {
+        this.linkType = linkType;
     }
     
     public void initCluster(Instances data) {
@@ -56,8 +68,17 @@ public class MyAgnes extends AbstractClusterer  {
                     if (j == k) {
                         continue;
                     }
-                    Double oldDistance = calculateSingleDistance(clusters.get(jMin), clusters.get(kMin));
-                    Double currentDistance = calculateSingleDistance(clusters.get(j), clusters.get(k));
+                    Double oldDistance = null;
+                    Double currentDistance = null;
+                    
+                    if (linkType == SINGLE) {
+                        oldDistance = calculateSingleDistance(clusters.get(jMin), clusters.get(kMin));
+                        currentDistance = calculateSingleDistance(clusters.get(j), clusters.get(k));
+                    } else if (linkType == COMPLETE) {
+                        oldDistance = calculateCompleteDistance(clusters.get(jMin), clusters.get(kMin));
+                        currentDistance = calculateCompleteDistance(clusters.get(j), clusters.get(k));
+                    }
+                    
                     if (currentDistance < oldDistance) {
                         jMin = j;
                         kMin = k;
@@ -84,7 +105,7 @@ public class MyAgnes extends AbstractClusterer  {
         }
     }
     
-    public double calculateSingleDistance(ClusterNode first, ClusterNode second) {
+    public Double calculateSingleDistance(ClusterNode first, ClusterNode second) {
         List<Instance> firstItems = first.getItems();
         List<Instance> secondItems = second.getItems();
         
@@ -100,6 +121,23 @@ public class MyAgnes extends AbstractClusterer  {
         
         return distance;
     }
+    
+    public Double calculateCompleteDistance(ClusterNode first, ClusterNode second) {
+        List<Instance> firstItems = first.getItems();
+        List<Instance> secondItems = second.getItems();
+
+        Double distance = Double.MIN_VALUE;
+        for (int i = 0; i < firstItems.size(); i++) {
+            for (int j = 0; j < secondItems.size(); j++) {
+                Double currentDistance = distanceFunction.distance(firstItems.get(i), secondItems.get(j));
+                if (currentDistance > distance) {
+                    distance = currentDistance;
+                }
+            }
+        }
+        
+        return distance;
+    }
 
     @Override
     public void buildClusterer(Instances data) {
@@ -107,6 +145,24 @@ public class MyAgnes extends AbstractClusterer  {
         initCluster(data);
         agglomerate(data);
         System.out.println("hmm");
+    }
+    
+    @Override
+    public int clusterInstance(Instance instance) throws Exception {
+        ClusterNode node = new ClusterNode();
+        node.leaf(true);
+        node.setData(instance);
+
+        Double distance = Double.MAX_VALUE;
+        int iMin = 0;
+        for (int i = 0; i < clusters.size(); i++) {
+            Double currentDistance = calculateSingleDistance(node, clusters.get(i));
+            if (currentDistance < distance) {
+                iMin = i;
+            }
+        }
+
+        return iMin;
     }
 
     @Override
@@ -118,7 +174,6 @@ public class MyAgnes extends AbstractClusterer  {
         distances = new Double[data.numInstances()][data.numInstances()];
         
         distanceFunction.setInstances(data);
-//        distanceFunction.setOptions(new String[] {"-D"});
         
         for (int i = 0; i < data.numInstances(); i++) {
             for (int j = 0; j < data.numInstances(); j++) {

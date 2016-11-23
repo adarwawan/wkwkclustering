@@ -22,6 +22,7 @@ public class MyAgnesTest {
         Instances instances = data.getDataSet();
         
         MyAgnes agnes = new MyAgnes();
+        agnes.setLinkType(MyAgnes.COMPLETE);
         agnes.buildClusterer(instances);
     }
 }
