@@ -126,6 +126,10 @@ public class MyKMeans extends RandomizableClusterer{
     public int numberOfClusters() throws Exception {
         return numCluster;
     }
+    
+    public void setNumberOfClusters(int num){
+        numCluster = num;
+    }
 
     private int clusterProcessedInstance(Instance data, boolean updateErrors) {
         double minDist = Integer.MAX_VALUE;

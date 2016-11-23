@@ -33,6 +33,8 @@ public class AccessClustering {
         System.out.println("Ler "+filename);
         DataSource source = new DataSource(filename);
         data = source.getDataSet();
+        Scanner reader = new Scanner(System.in);
+        int numCluster = 3;
         
         switch (cluster_algo) {
             case 1: // weka KMeans
@@ -40,7 +42,9 @@ public class AccessClustering {
                     SimpleKMeans kmeans = new SimpleKMeans();
                     kmeans.setSeed(10);
                     kmeans.setPreserveInstancesOrder(true);
-                    kmeans.setNumClusters(3);
+                    System.out.println("Jumlah cluster");
+                    numCluster = reader.nextInt();
+                    kmeans.setNumClusters(numCluster);
                     kmeans.buildClusterer(data);
                     System.out.println(kmeans.toString());
                     
@@ -57,6 +61,9 @@ public class AccessClustering {
                 {
                     HierarchicalClusterer clusterer = new HierarchicalClusterer();
                     clusterer.setPrintNewick(true);
+                    System.out.println("Jumlah cluster");
+                    numCluster = reader.nextInt();
+                    clusterer.setNumClusters(numCluster);
                     clusterer.buildClusterer(data);
                     System.out.println(clusterer.toString());
                     
@@ -71,9 +78,8 @@ public class AccessClustering {
                 }
             case 3: // myAgnes
                 MyAgnes myAgnes = new MyAgnes();
-                Scanner reader = new Scanner(System.in);
                 System.out.println("Jumlah cluster");
-                int numCluster = reader.nextInt();
+                numCluster = reader.nextInt();
                 
                 myAgnes.setNumClusters(numCluster);
                 myAgnes.buildClusterer(data);
@@ -83,6 +89,9 @@ public class AccessClustering {
                 {
                     MyKMeans kmeans = new MyKMeans();
                     kmeans.setSeed(10);
+                    System.out.println("Jumlah cluster");
+                    numCluster = reader.nextInt();
+                    kmeans.setNumberOfClusters(numCluster);
                     //important parameter to set: preserver order, number of cluster.
                     kmeans.buildClusterer(data);
                     System.out.println(kmeans.toString(data));
