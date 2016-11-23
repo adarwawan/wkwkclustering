@@ -10,6 +10,7 @@ import Clustering.MyKMeans;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Scanner;
 import weka.clusterers.ClusterEvaluation;
 import weka.clusterers.DensityBasedClusterer;
 import weka.clusterers.HierarchicalClusterer;
@@ -70,7 +71,11 @@ public class AccessClustering {
                 }
             case 3: // myAgnes
                 MyAgnes myAgnes = new MyAgnes();
-                myAgnes.setNumClusters(3);
+                Scanner reader = new Scanner(System.in);
+                System.out.println("Jumlah cluster");
+                int numCluster = reader.nextInt();
+                
+                myAgnes.setNumClusters(numCluster);
                 myAgnes.buildClusterer(data);
                 System.out.println(myAgnes.toString());
                 break;

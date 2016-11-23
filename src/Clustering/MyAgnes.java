@@ -19,7 +19,7 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     public final static int COMPLETE = 1;
     
     // Default cluster number
-    private int numClusters = 2;
+    private int numClusters = 1;
     
     // Default link type
     private int linkType = SINGLE;
@@ -51,14 +51,16 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
         for (int i = 0; i < data.numInstances(); i++) {
             ClusterNode node = new ClusterNode();
             node.leaf(true);
-            node.setData(data.get(i));
+            
+            NodeData nodeData = new NodeData(data.get(i), i);
+            node.setData(nodeData);
             
             clusters.add(node);
         }
     }
     
     public void agglomerate(Instances data) {
-        while (clusters.size() > 3) {
+        while (clusters.size() > numClusters) {
             // Find closest distance between cluster;
             int jMin = 0;
             int kMin = 1;
@@ -101,13 +103,13 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     }
     
     public Double calculateSingleDistance(ClusterNode first, ClusterNode second) {
-        List<Instance> firstItems = first.getItems();
-        List<Instance> secondItems = second.getItems();
+        List<NodeData> firstItems = first.getItems();
+        List<NodeData> secondItems = second.getItems();
         
         Double distance = Double.MAX_VALUE;
         for (int i = 0; i < firstItems.size(); i++) {
             for (int j = 0; j < secondItems.size(); j++) {
-                Double currentDistance = distanceFunction.distance(firstItems.get(i), secondItems.get(j));
+                Double currentDistance = distanceFunction.distance(firstItems.get(i).data, secondItems.get(j).data);
                 if (currentDistance < distance) {
                     distance = currentDistance;
                 }
@@ -118,13 +120,13 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     }
     
     public Double calculateCompleteDistance(ClusterNode first, ClusterNode second) {
-        List<Instance> firstItems = first.getItems();
-        List<Instance> secondItems = second.getItems();
+        List<NodeData> firstItems = first.getItems();
+        List<NodeData> secondItems = second.getItems();
 
         Double distance = Double.MIN_VALUE;
         for (int i = 0; i < firstItems.size(); i++) {
             for (int j = 0; j < secondItems.size(); j++) {
-                Double currentDistance = distanceFunction.distance(firstItems.get(i), secondItems.get(j));
+                Double currentDistance = distanceFunction.distance(firstItems.get(i).data, secondItems.get(j).data);
                 if (currentDistance > distance) {
                     distance = currentDistance;
                 }
@@ -146,7 +148,8 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     public int clusterInstance(Instance instance) throws Exception {
         ClusterNode node = new ClusterNode();
         node.leaf(true);
-        node.setData(instance);
+        NodeData nodeData = new NodeData(instance, 0);
+        node.setData(nodeData);
 
         Double distance = Double.MAX_VALUE;
         int iMin = 0;
@@ -181,8 +184,10 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     public String toString() {
         String result = "";
         for (int i = 0; i < clusters.size(); i++) {
-            result += "Cluster " + i;
-            result += clusters.get(i).getItems().toString();
+            result += "Cluster " + i+ ": ";
+            for (int j = 0; j < clusters.get(i).getItems().size(); j++) {
+                result += clusters.get(i).getItems().get(j).dataIndex + ", ";
+            }
             result += "\n";
         }
         

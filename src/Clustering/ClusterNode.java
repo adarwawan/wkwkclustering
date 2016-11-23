@@ -15,7 +15,7 @@ public class ClusterNode {
     private boolean isLeaf;
     private ClusterNode firstNode;
     private ClusterNode secondNode;
-    private Instance data;
+    private NodeData data;
     
     public ClusterNode() {
         firstNode = null;
@@ -23,7 +23,7 @@ public class ClusterNode {
         data = null;
     }
     
-    public void setData(Instance data) {
+    public void setData(NodeData data) {
         this.data = data;
     }
     
@@ -47,15 +47,15 @@ public class ClusterNode {
         return secondNode;
     }
     
-    public List<Instance> getItems() {
+    public List<NodeData> getItems() {
         if (this.isLeaf) {
             return new ArrayList<>(Arrays.asList(data));
         }
         
-        List<Instance> fromFirst = this.firstNode.getItems();
-        List<Instance> fromSecond = this.secondNode.getItems();
+        List<NodeData> fromFirst = this.firstNode.getItems();
+        List<NodeData> fromSecond = this.secondNode.getItems();
         
-        List<Instance> items = new ArrayList<>();
+        List<NodeData> items = new ArrayList<>();
         items.addAll(fromFirst);
         items.addAll(fromSecond);
         
