@@ -18,11 +18,14 @@ import weka.core.converters.ConverterUtils.DataSource;
  */
 public class MyAgnesTest {
     public static void main(String[] args) throws Exception {
-        DataSource data = new DataSource("point.arff");
+        DataSource data = new DataSource("criminal-preprocessed.arff");
         Instances instances = data.getDataSet();
         
         MyAgnes agnes = new MyAgnes();
+        agnes.setNumClusters(2);
         agnes.setLinkType(MyAgnes.COMPLETE);
         agnes.buildClusterer(instances);
+        
+        System.out.println(agnes);
     }
 }

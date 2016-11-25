@@ -33,6 +33,8 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     // Lists of Cluster
     ArrayList<ClusterNode> clusters;
     
+    public int numInstance;
+    
     
     public void setNumClusters(int numClusters) {
         this.numClusters = numClusters;
@@ -47,6 +49,7 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     }
     
     public void initCluster(Instances data) {
+        numInstance = data.numInstances();
         clusters = new ArrayList<>();
         for (int i = 0; i < data.numInstances(); i++) {
             ClusterNode node = new ClusterNode();
@@ -184,12 +187,21 @@ public class MyAgnes extends AbstractClusterer implements OptionHandler  {
     public String toString() {
         String result = "";
         for (int i = 0; i < clusters.size(); i++) {
+            result += "Cluster " + i + ": ";
+            result += (new Double(clusters.get(i).getItems().size()) / new Double(numInstance)) * 100;
+            result += "%";
+            result += "\n";
+        }
+        
+        for (int i = 0; i < clusters.size(); i++) {
             result += "Cluster " + i+ ": ";
             for (int j = 0; j < clusters.get(i).getItems().size(); j++) {
                 result += clusters.get(i).getItems().get(j).dataIndex + ", ";
             }
             result += "\n";
         }
+        
+        
         
         return result;
     }
