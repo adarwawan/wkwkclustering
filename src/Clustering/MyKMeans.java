@@ -233,6 +233,7 @@ public class MyKMeans extends RandomizableClusterer{
         StringBuffer temp = new StringBuffer();
         temp.append("\nkMeans\n======\n");
         temp.append("\nNumber of iterations: " + iterations);
+        temp.append("\nWithin cluster sum of squared errors: " + Utils.sum(squaredErrors));
 
 
         temp.append("\n\nFinal cluster centroids:\n");
